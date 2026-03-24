@@ -206,25 +206,29 @@
   .badge-grid {
     padding: 14px 24px;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
     gap: 8px;
   }
 
   .badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 11px;
+    gap: 6px;
+    padding: 6px 10px;
     border-radius: var(--radius-sm);
-    font-size: 11.5px;
-    font-weight: 500;
+    font-size: 11px;
     font-family: var(--font-mono);
-    letter-spacing: 0.01em;
     border: 1px solid transparent;
     cursor: pointer;
-    user-select: none;
-    transition: all 0.15s, transform 0.1s;
+    transition: all 0.15s;
+  }
+  /* Icon styling */
+  .badge-icon {
+    font-size: 10px;
+    font-weight: bold;
+    width: 10px;
+    display: inline-block;
   }
   .badge:active { transform: scale(0.95); }
   .badge.on {
@@ -259,9 +263,9 @@
 
   .field-label {
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600; /* Increased weight for better legibility */
     font-family: var(--font-mono);
-    color: var(--text-muted);
+    color: var(--text-primary); /* This ensures black in light / white in dark */
     text-transform: uppercase;
     letter-spacing: 0.06em;
     padding-top: 4px;
@@ -604,57 +608,62 @@
     // ── Header ──
     const header = document.createElement('div');
     header.className = 'card-header';
-
     const nameEl = document.createElement('div');
     nameEl.className = 'container-name-display';
     nameEl.textContent = name;
-    nameEl.title = 'Click to edit';
     nameEl.addEventListener('click', () => startEditName(nameEl, name));
     header.appendChild(nameEl);
 
+    // Subdomain Logic
     if (subdomain) {
       const pill = document.createElement('div');
       pill.className = 'subdomain-pill';
       pill.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>${esc(subdomain)}`;
-      pill.title = 'Click to edit';
       pill.addEventListener('click', () => startEditSubdomain(header, subdomain));
       header.appendChild(pill);
     } else {
       const addBtn = document.createElement('div');
       addBtn.className = 'subdomain-add';
-      addBtn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> add subdomain`;
+      addBtn.innerHTML = `+ add subdomain`;
       addBtn.addEventListener('click', () => startEditSubdomain(header, ''));
       header.appendChild(addBtn);
     }
-
     card.appendChild(header);
 
-    // ── Badges ──
+    // ── Body (Networks, Deps, Badges, Notes) ──
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    // Row 1: Networks
+    body.appendChild(makeMultiField('Networks', networks, networkChoices, 'Networks', 'network'));
+    body.appendChild(makeDivider());
+
+    // Row 2: Dependencies
+    body.appendChild(makeMultiField('Dependencies', deps, depChoices, 'Dependencies', 'dep'));
+    body.appendChild(makeDivider());
+
+    // Row 3: Badges (2-column grid)
     const badgeGrid = document.createElement('div');
     badgeGrid.className = 'badge-grid';
-
     BADGES.forEach(b => {
       const val = getVal(record, b.key);
       const on  = val === true || val === 1 || val === 'true';
       const badge = document.createElement('span');
       badge.className = `badge ${on ? 'on' : 'off'}`;
-      badge.innerHTML = `<span class="dot"></span>${esc(b.label)}`;
-      badge.title = on ? 'Click to disable' : 'Click to enable';
+      
+      // Conditional icon: Checkmark if true, nothing if false
+      const iconHtml = on ? '<span class="badge-icon">✓</span>' : '';
+      badge.innerHTML = `${iconHtml}${esc(b.label)}`;
+      
       badge.addEventListener('click', async () => {
         await saveField(b.key, !on);
       });
       badgeGrid.appendChild(badge);
     });
-    card.appendChild(badgeGrid);
-
-    // ── Body ──
-    const body = document.createElement('div');
-    body.className = 'card-body';
-
-    body.appendChild(makeMultiField('Networks',      networks, networkChoices, 'Networks',     'network'));
+    body.appendChild(badgeGrid);
     body.appendChild(makeDivider());
-    body.appendChild(makeMultiField('Dependencies',  deps,     depChoices,     'Dependencies', 'dep'));
-    body.appendChild(makeDivider());
+
+    // Row 4: Notes
     body.appendChild(makeNotesField(notes));
 
     card.appendChild(body);
