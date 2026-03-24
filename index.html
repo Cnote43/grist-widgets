@@ -625,7 +625,7 @@
     if (subdomain) {
       const subEl = document.createElement('div');
       subEl.className = 'subdomain-display';
-      subEl.textContent = subdomain;
+      subEl.textContent = `subdomain: ${subdomain}`
       subEl.addEventListener('click', () => startEditSubdomain(header, subdomain));
       titleGroup.appendChild(subEl);
     } else {
