@@ -498,7 +498,8 @@
       // baseUrl looks like http://0.0.0.0:8484/o/docs/api/docs/DOCID
       // Extract docId from the end of baseUrl
       console.log('[widget] baseUrl:', tokenInfo.baseUrl);
-      const docId = tokenInfo.baseUrl.split('/docs/').pop();
+      // baseUrl = http://0.0.0.0:8484/o/docs/api/docs/DOCID — grab last path segment
+      const docId = tokenInfo.baseUrl.split('/').pop();
       // Use parent frame origin to avoid CORS with internal address
       const origin = document.referrer
         ? new URL(document.referrer).origin
