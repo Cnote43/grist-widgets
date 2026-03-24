@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Container Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -413,6 +413,25 @@
   @keyframes toastIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Mobile Optimization for Stacking */
+  @media screen and (max-width: 600px) {
+    body {
+      padding: 8px; /* Reduce outer padding to save space */
+      background: var(--bg);
+    }
+  
+    .card {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 auto;
+      border-radius: var(--radius-sm);
+    }
+    
+    /* Increase touch targets for mobile */
+    .badge, .subdomain-display, .container-name-display {
+      padding: 10px 8px; 
+    }
   }
 </style>
 </head>
