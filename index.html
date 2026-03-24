@@ -492,35 +492,32 @@
   // ── Choice loading via REST API ───────────────────────────────────────────
   // Choices live in column widgetOptions, accessible via Grist's REST API.
 
-  async function loadChoicesViaAPI(tid) {
+  // ── Choice loading via Table Fetch ──────────────────────────────────────────
+
+  async function loadChoicesFromTables() {
     try {
-      const tokenInfo = await grist.docApi.getAccessToken({ readOnly: true });
-      // baseUrl looks like http://0.0.0.0:8484/o/docs/api/docs/DOCID
-      // Extract docId from the end of baseUrl
-      console.log('[widget] baseUrl:', tokenInfo.baseUrl);
-      // baseUrl = http://0.0.0.0:8484/o/docs/api/docs/DOCID — grab last path segment
-      const docId = tokenInfo.baseUrl.split('/').pop();
-      // Use parent frame origin to avoid CORS with internal address
-      const origin = document.referrer
-        ? new URL(document.referrer).origin
-        : window.location.ancestorOrigins?.[0]
-          ? new URL(window.location.ancestorOrigins[0]).origin
-          : null;
-      if (!origin) { console.error('[widget] cannot determine Grist origin'); return; }
-      const url = `${origin}/o/docs/api/docs/${docId}/tables/${tid}/columns?auth=${tokenInfo.token}`;
-      console.log('[widget] fetching columns:', url);
-      const resp = await fetch(url);
-      const data = await resp.json();
-      console.log('[widget] columns response:', JSON.stringify(data));
-      for (const col of (data.columns ?? [])) {
-        const raw = col.fields?.widgetOptions;
-        const opts = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : {};
-        if (col.id === 'Networks')     networkChoices = opts.choices ?? [];
-        if (col.id === 'Dependencies') depChoices     = opts.choices ?? [];
+      // Fetch the 'Networks' table. Change 'Networks' to the actual Table ID if different.
+      const networkData = await grist.docApi.fetchTable('Networks');
+      // Assuming the primary column in that table is also named 'Network' or 'Name'
+      // We map the column array to get a clean list of strings
+      if (networkData.Network) {
+        networkChoices = networkData.Network.filter(Boolean);
+      } else if (networkData.Name) {
+        networkChoices = networkData.Name.filter(Boolean);
       }
-      console.log('[widget] networkChoices:', networkChoices, 'depChoices:', depChoices);
-    } catch(e) {
-      console.error('[widget] loadChoicesViaAPI error:', e);
+
+      // Fetch the 'Dependencies' table.
+      const depData = await grist.docApi.fetchTable('Dependencies');
+      if (depData.Container) {
+        depChoices = depData.Container.filter(Boolean);
+      } else if (depData.Name) {
+        depChoices = depData.Name.filter(Boolean);
+      }
+
+      console.log('[widget] Refreshed choices from tables:', { networkChoices, depChoices });
+    } catch (e) {
+      console.error('[widget] Failed to fetch choices from tables:', e);
+      showToast('Could not sync Table choices');
     }
   }
 
@@ -842,39 +839,18 @@
     ],
   });
 
-  grist.onRecord(async (record, mappings) => {
+  grist.onRecord(async (record) => {
     currentRecord = record;
-    currentRowId  = record?.id ?? null;
+    currentRowId = record?.id ?? null;
 
-    if (!record || !record.id) { renderEmpty(); return; }
-
-    // Get tableId once using listTables + record id cross-reference
-    if (!tableId) {
-      try {
-        const tables = await grist.docApi.listTables();
-        console.log('[widget] tables:', tables);
-        for (const tid of tables) {
-          try {
-            const tdata = await grist.docApi.fetchTable(tid);
-            console.log('[widget] checking table', tid, 'ids:', tdata.id?.slice(0,5));
-            if (Array.isArray(tdata.id) && tdata.id.includes(record.id)) {
-              tableId = tid;
-              console.log('[widget] found tableId:', tableId);
-              break;
-            }
-          } catch(e) {}
-        }
-        if (!tableId) console.warn('[widget] tableId not found, record.id:', record.id);
-      } catch(e) {
-        console.error('[widget] listTables error:', e);
-      }
+    if (!record || !record.id) {
+      renderEmpty();
+      return;
     }
 
-    // Load choices once we have a tableId
-    if (tableId && !networkChoices.length && !depChoices.length) {
-      await loadChoicesViaAPI(tableId);
-    }
-
+    // Always refresh choices from tables to ensure the dropdowns are up to date
+    await loadChoicesFromTables();
+  
     renderCard(record);
   });
 
