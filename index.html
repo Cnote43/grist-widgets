@@ -496,16 +496,21 @@
     try {
       const tokenInfo = await grist.docApi.getAccessToken({ readOnly: true });
       const url = `${tokenInfo.baseUrl}/tables/${tid}/columns?auth=${tokenInfo.token}`;
+      console.log('[widget] fetching columns:', url);
       const resp = await fetch(url);
-      if (!resp.ok) return;
       const data = await resp.json();
+      console.log('[widget] columns response:', JSON.stringify(data));
       for (const col of (data.columns ?? [])) {
         const raw = col.fields?.widgetOptions;
         const opts = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : {};
+        console.log('[widget] col', col.id, 'opts:', JSON.stringify(opts));
         if (col.id === 'Networks')     networkChoices = opts.choices ?? [];
         if (col.id === 'Dependencies') depChoices     = opts.choices ?? [];
       }
-    } catch(e) {}
+      console.log('[widget] networkChoices:', networkChoices, 'depChoices:', depChoices);
+    } catch(e) {
+      console.error('[widget] loadChoicesViaAPI error:', e);
+    }
   }
 
   // ── Dropdown ──────────────────────────────────────────────────────────────
@@ -832,22 +837,26 @@
 
     if (!record || !record.id) { renderEmpty(); return; }
 
-    // Get tableId once using listTables + fetchSelectedTable cross-reference
+    // Get tableId once using listTables + record id cross-reference
     if (!tableId) {
       try {
         const tables = await grist.docApi.listTables();
-        // fetchSelectedTable returns data for whichever table this widget is attached to
-        // We can identify it by checking which tableId's data contains our record id
+        console.log('[widget] tables:', tables);
         for (const tid of tables) {
           try {
             const tdata = await grist.docApi.fetchTable(tid);
+            console.log('[widget] checking table', tid, 'ids:', tdata.id?.slice(0,5));
             if (Array.isArray(tdata.id) && tdata.id.includes(record.id)) {
               tableId = tid;
+              console.log('[widget] found tableId:', tableId);
               break;
             }
           } catch(e) {}
         }
-      } catch(e) {}
+        if (!tableId) console.warn('[widget] tableId not found, record.id:', record.id);
+      } catch(e) {
+        console.error('[widget] listTables error:', e);
+      }
     }
 
     // Load choices once we have a tableId
