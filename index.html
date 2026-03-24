@@ -489,19 +489,23 @@
     if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
   }
 
-  // ── Choice loading via column mapping ────────────────────────────────────
-  // Choices are delivered by Grist through onRecords/mappings — no API calls needed.
+  // ── Choice loading via REST API ───────────────────────────────────────────
+  // Choices live in column widgetOptions, accessible via Grist's REST API.
 
-  function extractChoices(mappings, colId) {
-    if (!mappings) return [];
-    const col = mappings[colId];
-    if (!col) return [];
+  async function loadChoicesViaAPI(tid) {
     try {
-      const opts = typeof col.widgetOptions === 'string'
-        ? JSON.parse(col.widgetOptions)
-        : (col.widgetOptions ?? {});
-      return opts.choices ?? [];
-    } catch(e) { return []; }
+      const tokenInfo = await grist.docApi.getAccessToken({ readOnly: true });
+      const url = `${tokenInfo.baseUrl}/tables/${tid}/columns?auth=${tokenInfo.token}`;
+      const resp = await fetch(url);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      for (const col of (data.columns ?? [])) {
+        const raw = col.fields?.widgetOptions;
+        const opts = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : {};
+        if (col.id === 'Networks')     networkChoices = opts.choices ?? [];
+        if (col.id === 'Dependencies') depChoices     = opts.choices ?? [];
+      }
+    } catch(e) {}
   }
 
   // ── Dropdown ──────────────────────────────────────────────────────────────
@@ -813,12 +817,12 @@
       { name: 'Networks',     title: 'Networks',     type: 'ChoiceList' },
       { name: 'Dependencies', title: 'Dependencies', type: 'ChoiceList' },
       { name: 'Notes',        title: 'Notes',        type: 'Text',       optional: true },
-      { name: 'Compose',      title: 'Compose',      type: 'Bool',       optional: true },
-      { name: 'Proxy_Conf',   title: 'Proxy-Conf',   type: 'Bool',       optional: true },
-      { name: 'Cloudflare',   title: 'Cloudflare',   type: 'Bool',       optional: true },
-      { name: 'Authelia',     title: 'Authelia',     type: 'Bool',       optional: true },
-      { name: 'Auto_Update',  title: 'Auto-Update',  type: 'Bool',       optional: true },
-      { name: 'Auto_Start',   title: 'Auto-Start',   type: 'Bool',       optional: true },
+      { name: 'Compose',      title: 'Compose',      type: 'Bool,Int',   optional: true },
+      { name: 'Proxy_Conf',   title: 'Proxy-Conf',   type: 'Bool,Int',   optional: true },
+      { name: 'Cloudflare',   title: 'Cloudflare',   type: 'Bool,Int',   optional: true },
+      { name: 'Authelia',     title: 'Authelia',     type: 'Bool,Int',   optional: true },
+      { name: 'Auto_Update',  title: 'Auto-Update',  type: 'Bool,Int',   optional: true },
+      { name: 'Auto_Start',   title: 'Auto-Start',   type: 'Bool,Int',   optional: true },
     ],
   });
 
@@ -828,10 +832,27 @@
 
     if (!record || !record.id) { renderEmpty(); return; }
 
-    // Extract choices from column mappings (most reliable cross-version method)
-    if (mappings) {
-      networkChoices = extractChoices(mappings, 'Networks');
-      depChoices     = extractChoices(mappings, 'Dependencies');
+    // Get tableId once using listTables + fetchSelectedTable cross-reference
+    if (!tableId) {
+      try {
+        const tables = await grist.docApi.listTables();
+        // fetchSelectedTable returns data for whichever table this widget is attached to
+        // We can identify it by checking which tableId's data contains our record id
+        for (const tid of tables) {
+          try {
+            const tdata = await grist.docApi.fetchTable(tid);
+            if (Array.isArray(tdata.id) && tdata.id.includes(record.id)) {
+              tableId = tid;
+              break;
+            }
+          } catch(e) {}
+        }
+      } catch(e) {}
+    }
+
+    // Load choices once we have a tableId
+    if (tableId && !networkChoices.length && !depChoices.length) {
+      await loadChoicesViaAPI(tableId);
     }
 
     renderCard(record);
