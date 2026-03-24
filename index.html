@@ -361,10 +361,14 @@
     white-space: pre-wrap;
     cursor: pointer;
     min-height: 40px;
-    transition: border-color 0.15s;
     word-break: break-word;
+    opacity: 0.65;
+    transition: opacity 0.15s, border-color 0.15s;
   }
-  .notes-display:hover { border-color: var(--border-strong); }
+  .notes-display:hover {
+    opacity: 1;
+    border-color: var(--border-strong);
+  }
   .notes-display.empty { color: var(--text-muted); font-style: italic; }
 
   .notes-textarea {
@@ -428,11 +432,11 @@
 <script>
   const BADGES = [
     { key: 'Compose',     label: 'Compose Stack' },
-    { key: 'Proxy_Conf',  label: 'Proxy-Conf' },
-    { key: 'Cloudflare',  label: 'Cloudflare' },
     { key: 'Authelia',    label: 'Authelia' },
     { key: 'Auto_Update', label: 'Auto-Update' },
+    { key: 'Proxy_Conf',  label: 'Proxy-Conf' },
     { key: 'Auto_Start',  label: 'Auto-Start' },
+    { key: 'Cloudflare',  label: 'Cloudflare' },
   ];
 
   let currentRecord  = null;
