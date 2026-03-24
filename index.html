@@ -54,6 +54,9 @@
       --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
       --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.3);
     }
+    .subdomain-display {
+      color: #e5e7eb; /* Off-white for dark mode */
+    }
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -103,19 +106,22 @@
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
 
+  .header-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
   .container-name-display {
     font-family: var(--font-mono);
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    word-break: break-all;
     cursor: pointer;
-    border-radius: var(--radius-sm);
     padding: 2px 4px;
-    margin: -2px -4px;
+    margin-left: -4px; /* Align text with the left edge of the card content */
+    border-radius: var(--radius-sm);
     transition: background 0.15s;
-    display: inline-block;
   }
   .container-name-display:hover { background: var(--border); }
 
@@ -134,37 +140,30 @@
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
   }
 
-  .subdomain-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 8px;
-    padding: 3px 9px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-radius: 100px;
-    font-size: 11px;
+  .subdomain-display {
     font-family: var(--font-mono);
+    font-size: 18px;
     font-weight: 500;
     cursor: pointer;
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    padding: 2px 4px;
+    margin-left: -4px;
+    border-radius: var(--radius-sm);
     transition: background 0.15s;
+    color: #4b5563;
   }
-  .subdomain-pill:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+  .subdomain-display:hover, .container-name-display:hover {
+    background: var(--border);
+  }
 
   .subdomain-add {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 8px;
-    padding: 3px 9px;
-    color: var(--text-muted);
-    border-radius: 100px;
+    display: inline-block;
+    margin-top: 4px;
     font-size: 11px;
     font-family: var(--font-mono);
+    color: var(--text-muted);
     cursor: pointer;
-    border: 1px dashed var(--border-strong);
-    transition: all 0.15s;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .subdomain-add:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 
@@ -611,26 +610,33 @@
     // ── Header ──
     const header = document.createElement('div');
     header.className = 'card-header';
+
+    const titleGroup = document.createElement('div');
+    titleGroup.className = 'header-titles'; // Flex column wrapper
+
+    // Container Name (24px)
     const nameEl = document.createElement('div');
     nameEl.className = 'container-name-display';
     nameEl.textContent = name;
     nameEl.addEventListener('click', () => startEditName(nameEl, name));
-    header.appendChild(nameEl);
+    titleGroup.appendChild(nameEl);
 
-    // Subdomain Logic
+    // Subdomain (18px)
     if (subdomain) {
-      const pill = document.createElement('div');
-      pill.className = 'subdomain-pill';
-      pill.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>${esc(subdomain)}`;
-      pill.addEventListener('click', () => startEditSubdomain(header, subdomain));
-      header.appendChild(pill);
+      const subEl = document.createElement('div');
+      subEl.className = 'subdomain-display';
+      subEl.textContent = subdomain;
+      subEl.addEventListener('click', () => startEditSubdomain(header, subdomain));
+      titleGroup.appendChild(subEl);
     } else {
       const addBtn = document.createElement('div');
       addBtn.className = 'subdomain-add';
-      addBtn.innerHTML = `+ add subdomain`;
+      addBtn.textContent = '+ add subdomain';
       addBtn.addEventListener('click', () => startEditSubdomain(header, ''));
-      header.appendChild(addBtn);
+      titleGroup.appendChild(addBtn);
     }
+
+    header.appendChild(titleGroup);
     card.appendChild(header);
 
     // ── Body (Networks, Deps, Badges, Notes) ──
