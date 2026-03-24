@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface-2: #f0efe9;
+    --border: #e2e0d8;
+    --border-strong: #c8c5ba;
+    --text-primary: #1a1917;
+    --text-secondary: #6b6860;
+    --text-muted: #9c9a94;
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --tag-bg: #eeecea;
+    --tag-text: #44423d;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --radius: 8px;
+    --radius-sm: 5px;
+    --radius-lg: 12px;
+    --font: 'Geist', sans-serif;
+    --font-mono: 'Geist Mono', monospace;
+  }
+ 
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --surface: #1c1b19;
+      --surface-2: #242320;
+      --border: #2e2c28;
+      --border-strong: #3d3b35;
+      --text-primary: #f0ede8;
+      --text-secondary: #9c9a94;
+      --text-muted: #5c5a55;
+      --accent: #3b82f6;
+      --accent-soft: #1e3a5f;
+      --green: #22c55e;
+      --green-soft: #14291f;
+      --red: #ef4444;
+      --red-soft: #2d1515;
+      --amber: #f59e0b;
+      --amber-soft: #2d2008;
+      --tag-bg: #2a2926;
+      --tag-text: #b8b5ae;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+    }
+  }
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+ 
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    gap: 12px;
+    color: var(--text-muted);
+  }
+ 
+  .empty-state svg {
+    opacity: 0.3;
+  }
+ 
+  .empty-state p {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+ 
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    animation: fadeIn 0.2s ease;
+  }
+ 
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  /* Header */
+  .card-header {
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface-2);
+  }
+ 
+  .container-name {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    word-break: break-all;
+  }
+ 
+  .subdomain-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 3px 9px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+ 
+  .subdomain-pill svg { flex-shrink: 0; }
+ 
+  /* Status badges */
+  .badge-grid {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+ 
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    transition: opacity 0.15s;
+  }
+ 
+  .badge.on {
+    background: var(--green-soft);
+    color: var(--green);
+    border-color: color-mix(in srgb, var(--green) 20%, transparent);
+  }
+ 
+  .badge.off {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border-color: var(--border);
+    opacity: 0.6;
+  }
+ 
+  .badge .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+ 
+  /* Body */
+  .card-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+ 
+  .field {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 8px 16px;
+    align-items: start;
+  }
+ 
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 3px;
+  }
+ 
+  .field-value {
+    color: var(--text-primary);
+    font-size: 13.5px;
+  }
+ 
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+ 
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    border: 1px solid var(--border);
+  }
+ 
+  .tag.network {
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+ 
+  .tag.dep {
+    border-color: color-mix(in srgb, var(--amber) 25%, transparent);
+    background: var(--amber-soft);
+    color: var(--amber);
+  }
+ 
+  .notes-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+ 
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 -24px;
+  }
+ 
+  .empty-field {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+ 
+<div id="app">
+  <div class="empty-state">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="2" y="3" width="20" height="14" rx="2"/>
+      <path d="M8 21h8M12 17v4"/>
+    </svg>
+    <p>select a container to view details</p>
+  </div>
+</div>
+ 
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script>
+  const BADGES = [
+    { key: 'Compose',     label: 'Compose Stack' },
+    { key: 'Proxy_Conf',  label: 'Proxy-Conf' },
+    { key: 'Cloudflare',  label: 'Cloudflare' },
+    { key: 'Authelia',    label: 'Authelia' },
+    { key: 'Auto_Update', label: 'Auto-Update' },
+    { key: 'Auto_Start',  label: 'Auto-Start' },
+  ];
+ 
+  function parseMultiSelect(val) {
+    if (!val) return [];
+    if (Array.isArray(val)) return val.filter(Boolean);
+    // Grist sends choice lists as ["L", "val1", "val2"]
+    if (Array.isArray(val) && val[0] === 'L') return val.slice(1);
+    return String(val).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+  }
+ 
+  function escape(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+ 
+  function renderTags(values, cls) {
+    if (!values.length) return '<span class="empty-field">—</span>';
+    return `<div class="tag-list">${values.map(v =>
+      `<span class="tag ${cls}">${escape(v)}</span>`
+    ).join('')}</div>`;
+  }
+ 
+  function render(record) {
+    if (!record) {
+      document.getElementById('app').innerHTML = `
+        <div class="empty-state">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          <p>select a container to view details</p>
+        </div>`;
+      return;
+    }
+ 
+    const name      = record.Container || record.container || '—';
+    const subdomain = record.Subdomain || record.subdomain || '';
+    const networks  = parseMultiSelect(record.Networks  || record.networks);
+    const deps      = parseMultiSelect(record.Dependencies || record.dependencies);
+    const notes     = record.Notes || record.notes || '';
+ 
+    const badgesHTML = BADGES.map(b => {
+      // Try both exact key and lowercased/underscored variants
+      const val = record[b.key] ?? record[b.key.toLowerCase()] ?? record[b.key.replace('_',' ')] ?? false;
+      const on  = val === true || val === 1 || val === 'true';
+      return `<span class="badge ${on ? 'on' : 'off'}">
+        <span class="dot"></span>${escape(b.label)}
+      </span>`;
+    }).join('');
+ 
+    const subdomainHTML = subdomain
+      ? `<div class="subdomain-pill">
+           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+           ${escape(subdomain)}
+         </div>`
+      : '';
+ 
+    document.getElementById('app').innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="container-name">${escape(name)}</div>
+            ${subdomainHTML}
+          </div>
+        </div>
+ 
+        <div class="badge-grid">${badgesHTML}</div>
+ 
+        <div class="card-body">
+          <div class="field">
+            <span class="field-label">Networks</span>
+            <div class="field-value">${renderTags(networks, 'network')}</div>
+          </div>
+ 
+          <div class="divider"></div>
+ 
+          <div class="field">
+            <span class="field-label">Dependencies</span>
+            <div class="field-value">${renderTags(deps, 'dep')}</div>
+          </div>
+ 
+          ${notes ? `
+          <div class="divider"></div>
+          <div class="field">
+            <span class="field-label">Notes</span>
+            <div class="field-value"><div class="notes-box">${escape(notes)}</div></div>
+          </div>` : ''}
+        </div>
+      </div>`;
+  }
+ 
+  grist.ready({ requiredAccess: 'read table' });
+  grist.onRecord(record => render(record));
+</script>
+</body>
+</html>
