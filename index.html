@@ -20,21 +20,19 @@
     --accent-soft: #dbeafe;
     --green: #16a34a;
     --green-soft: #dcfce7;
-    --red: #dc2626;
-    --red-soft: #fee2e2;
     --amber: #d97706;
     --amber-soft: #fef3c7;
     --tag-bg: #eeecea;
     --tag-text: #44423d;
-    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
     --radius: 8px;
     --radius-sm: 5px;
     --radius-lg: 12px;
     --font: 'Geist', sans-serif;
     --font-mono: 'Geist Mono', monospace;
   }
- 
+
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #111110;
@@ -49,19 +47,17 @@
       --accent-soft: #1e3a5f;
       --green: #22c55e;
       --green-soft: #14291f;
-      --red: #ef4444;
-      --red-soft: #2d1515;
       --amber: #f59e0b;
       --amber-soft: #2d2008;
       --tag-bg: #2a2926;
       --tag-text: #b8b5ae;
-      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.3);
     }
   }
- 
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   body {
     font-family: var(--font);
     background: var(--bg);
@@ -72,7 +68,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
- 
+
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -82,56 +78,67 @@
     gap: 12px;
     color: var(--text-muted);
   }
- 
-  .empty-state svg {
-    opacity: 0.3;
-  }
- 
-  .empty-state p {
-    font-size: 13px;
-    font-family: var(--font-mono);
-    letter-spacing: 0.02em;
-  }
- 
+  .empty-state svg { opacity: 0.3; }
+  .empty-state p { font-size: 13px; font-family: var(--font-mono); letter-spacing: 0.02em; }
+
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    overflow: hidden;
+    overflow: visible;
     animation: fadeIn 0.2s ease;
   }
- 
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
- 
-  /* Header */
+
+  /* ── Header ── */
   .card-header {
     padding: 20px 24px 18px;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
     background: var(--surface-2);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
- 
-  .container-name {
+
+  .container-name-display {
     font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.02em;
     word-break: break-all;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    padding: 2px 4px;
+    margin: -2px -4px;
+    transition: background 0.15s;
+    display: inline-block;
   }
- 
+  .container-name-display:hover { background: var(--border); }
+
+  .inline-input {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    outline: none;
+    width: 100%;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
   .subdomain-pill {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    margin-top: 6px;
+    margin-top: 8px;
     padding: 3px 9px;
     background: var(--accent-soft);
     color: var(--accent);
@@ -139,70 +146,117 @@
     font-size: 11px;
     font-family: var(--font-mono);
     font-weight: 500;
-    letter-spacing: 0.01em;
+    cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    transition: background 0.15s;
   }
- 
-  .subdomain-pill svg { flex-shrink: 0; }
- 
-  /* Status badges */
+  .subdomain-pill:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+
+  .subdomain-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 3px 9px;
+    color: var(--text-muted);
+    border-radius: 100px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    border: 1px dashed var(--border-strong);
+    transition: all 0.15s;
+  }
+  .subdomain-add:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+  .subdomain-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .subdomain-input {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    outline: none;
+    width: 200px;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  .btn-xs {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+  .btn-xs:hover { opacity: 0.8; }
+  .btn-save   { background: var(--accent); color: #fff; }
+  .btn-cancel { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  /* ── Badges ── */
   .badge-grid {
-    padding: 16px 24px;
+    padding: 14px 24px;
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
- 
+
   .badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px;
+    padding: 5px 11px;
     border-radius: var(--radius-sm);
     font-size: 11.5px;
     font-weight: 500;
     font-family: var(--font-mono);
     letter-spacing: 0.01em;
     border: 1px solid transparent;
-    transition: opacity 0.15s;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s, transform 0.1s;
   }
- 
+  .badge:active { transform: scale(0.95); }
   .badge.on {
     background: var(--green-soft);
     color: var(--green);
     border-color: color-mix(in srgb, var(--green) 20%, transparent);
   }
- 
+  .badge.on:hover { background: color-mix(in srgb, var(--green) 20%, transparent); }
   .badge.off {
     background: var(--surface-2);
     color: var(--text-muted);
     border-color: var(--border);
-    opacity: 0.6;
+    opacity: 0.65;
   }
- 
-  .badge .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-    flex-shrink: 0;
-  }
- 
-  /* Body */
+  .badge.off:hover { opacity: 1; color: var(--text-secondary); }
+  .badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  /* ── Body ── */
   .card-body {
     padding: 20px 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
- 
+
   .field {
     display: grid;
     grid-template-columns: 120px 1fr;
     gap: 8px 16px;
     align-items: start;
   }
- 
+
   .field-label {
     font-size: 11px;
     font-weight: 500;
@@ -210,46 +264,90 @@
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding-top: 3px;
+    padding-top: 4px;
   }
- 
-  .field-value {
-    color: var(--text-primary);
-    font-size: 13.5px;
-  }
- 
-  .tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
- 
+
+  .field-value { color: var(--text-primary); font-size: 13.5px; }
+
+  /* ── Tags ── */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; position: relative; }
+
   .tag {
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     padding: 2px 8px;
-    background: var(--tag-bg);
-    color: var(--tag-text);
     border-radius: var(--radius-sm);
     font-size: 12px;
     font-family: var(--font-mono);
-    font-weight: 400;
     border: 1px solid var(--border);
+    background: var(--tag-bg);
+    color: var(--tag-text);
   }
- 
-  .tag.network {
-    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
-    background: var(--accent-soft);
-    color: var(--accent);
+  .tag.network { border-color: color-mix(in srgb, var(--accent) 25%, transparent); background: var(--accent-soft); color: var(--accent); }
+  .tag.dep     { border-color: color-mix(in srgb, var(--amber)  25%, transparent); background: var(--amber-soft);  color: var(--amber); }
+
+  .tag-remove {
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 14px;
+    line-height: 1;
+    transition: opacity 0.15s;
+    margin-left: 2px;
   }
- 
-  .tag.dep {
-    border-color: color-mix(in srgb, var(--amber) 25%, transparent);
-    background: var(--amber-soft);
-    color: var(--amber);
+  .tag-remove:hover { opacity: 1; }
+
+  .tag-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    border: 1px dashed var(--border-strong);
+    cursor: pointer;
+    background: none;
+    transition: all 0.15s;
   }
- 
-  .notes-box {
+  .tag-add-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+  /* ── Dropdown ── */
+  .dropdown-anchor { position: relative; display: inline-block; }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1000;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    min-width: 180px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .dropdown-item:hover { background: var(--surface-2); }
+  .check { width: 14px; font-size: 11px; color: var(--green); flex-shrink: 0; }
+
+  /* ── Notes ── */
+  .notes-display {
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -258,23 +356,61 @@
     color: var(--text-secondary);
     line-height: 1.6;
     white-space: pre-wrap;
+    cursor: pointer;
+    min-height: 40px;
+    transition: border-color 0.15s;
+    word-break: break-word;
   }
- 
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 0 -24px;
-  }
- 
-  .empty-field {
-    color: var(--text-muted);
-    font-style: italic;
+  .notes-display:hover { border-color: var(--border-strong); }
+  .notes-display.empty { color: var(--text-muted); font-style: italic; }
+
+  .notes-textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
     font-size: 13px;
+    font-family: var(--font);
+    color: var(--text-primary);
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  .notes-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    justify-content: flex-end;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 0 -24px; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: var(--text-primary);
+    color: var(--bg);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    box-shadow: var(--shadow-md);
+    animation: toastIn 0.2s ease;
+    z-index: 9999;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 </style>
 </head>
 <body>
- 
 <div id="app">
   <div class="empty-state">
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -284,7 +420,7 @@
     <p>select a container to view details</p>
   </div>
 </div>
- 
+
 <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 <script>
   const BADGES = [
@@ -295,97 +431,420 @@
     { key: 'Auto_Update', label: 'Auto-Update' },
     { key: 'Auto_Start',  label: 'Auto-Start' },
   ];
- 
+
+  let currentRecord  = null;
+  let currentRowId   = null;
+  let tableId        = null;
+  let networkChoices = [];
+  let depChoices     = [];
+  let activeDropdown = null;
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = String(str ?? '');
+    return d.innerHTML;
+  }
+
   function parseMultiSelect(val) {
     if (!val) return [];
-    if (Array.isArray(val)) return val.filter(Boolean);
-    // Grist sends choice lists as ["L", "val1", "val2"]
-    if (Array.isArray(val) && val[0] === 'L') return val.slice(1);
+    if (Array.isArray(val)) {
+      if (val[0] === 'L') return val.slice(1).filter(Boolean);
+      return val.filter(Boolean);
+    }
     return String(val).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
   }
- 
-  function escape(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  function encodeChoiceList(arr) { return ['L', ...arr]; }
+
+  function getVal(record, key) {
+    return record[key]
+      ?? record[key.toLowerCase()]
+      ?? record[key.replace(/_/g, ' ')]
+      ?? null;
   }
- 
-  function renderTags(values, cls) {
-    if (!values.length) return '<span class="empty-field">—</span>';
-    return `<div class="tag-list">${values.map(v =>
-      `<span class="tag ${cls}">${escape(v)}</span>`
-    ).join('')}</div>`;
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
   }
- 
-  function render(record) {
-    if (!record) {
-      document.getElementById('app').innerHTML = `
-        <div class="empty-state">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <path d="M8 21h8M12 17v4"/>
-          </svg>
-          <p>select a container to view details</p>
-        </div>`;
-      return;
+
+  async function saveField(colId, value) {
+    if (!currentRowId || !tableId) return;
+    try {
+      await grist.getTable(tableId).update({ id: currentRowId, fields: { [colId]: value } });
+    } catch(e) {
+      showToast('Save failed: ' + e.message);
     }
- 
-    const name      = record.Container || record.container || '—';
-    const subdomain = record.Subdomain || record.subdomain || '';
-    const networks  = parseMultiSelect(record.Networks  || record.networks);
-    const deps      = parseMultiSelect(record.Dependencies || record.dependencies);
-    const notes     = record.Notes || record.notes || '';
- 
-    const badgesHTML = BADGES.map(b => {
-      // Try both exact key and lowercased/underscored variants
-      const val = record[b.key] ?? record[b.key.toLowerCase()] ?? record[b.key.replace('_',' ')] ?? false;
-      const on  = val === true || val === 1 || val === 'true';
-      return `<span class="badge ${on ? 'on' : 'off'}">
-        <span class="dot"></span>${escape(b.label)}
-      </span>`;
-    }).join('');
- 
-    const subdomainHTML = subdomain
-      ? `<div class="subdomain-pill">
-           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-           ${escape(subdomain)}
-         </div>`
-      : '';
- 
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => closeDropdown());
+
+  function closeDropdown() {
+    if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
+  }
+
+  // ── Choice loading ────────────────────────────────────────────────────────
+
+  async function loadChoices() {
+    if (!tableId) return;
+    try {
+      const cols = await grist.docApi.getTableCols(tableId);
+      for (const col of cols) {
+        const opts = col.fields?.widgetOptions ? JSON.parse(col.fields.widgetOptions) : {};
+        if (col.id === 'Networks')      networkChoices = opts.choices ?? [];
+        if (col.id === 'Dependencies')  depChoices     = opts.choices ?? [];
+      }
+    } catch(e) {
+      // Silently fail — choices just won't populate
+    }
+  }
+
+  // ── Dropdown ──────────────────────────────────────────────────────────────
+
+  function openChoiceDropdown(anchorEl, currentValues, choices, colKey) {
+    closeDropdown();
+
+    const menu = document.createElement('div');
+    menu.className = 'dropdown-menu';
+
+    if (!choices.length) {
+      const empty = document.createElement('div');
+      empty.className = 'dropdown-item';
+      empty.style.cssText = 'color:var(--text-muted);font-style:italic;cursor:default';
+      empty.textContent = 'No choices defined in column';
+      menu.appendChild(empty);
+    }
+
+    choices.forEach(choice => {
+      const selected = currentValues.includes(choice);
+      const item = document.createElement('div');
+      item.className = 'dropdown-item';
+
+      const check = document.createElement('span');
+      check.className = 'check';
+      check.textContent = selected ? '✓' : '';
+
+      const label = document.createElement('span');
+      label.textContent = choice;
+
+      item.appendChild(check);
+      item.appendChild(label);
+
+      item.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const next = selected
+          ? currentValues.filter(v => v !== choice)
+          : [...currentValues, choice];
+        closeDropdown();
+        await saveField(colKey, encodeChoiceList(next));
+      });
+      menu.appendChild(item);
+    });
+
+    // Wrap anchor + menu together so menu is positioned relative to anchor
+    const anchor = document.createElement('div');
+    anchor.className = 'dropdown-anchor';
+    anchorEl.parentNode.insertBefore(anchor, anchorEl);
+    anchor.appendChild(anchorEl);
+    anchor.appendChild(menu);
+    activeDropdown = menu;
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  function renderEmpty() {
     document.getElementById('app').innerHTML = `
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="container-name">${escape(name)}</div>
-            ${subdomainHTML}
-          </div>
-        </div>
- 
-        <div class="badge-grid">${badgesHTML}</div>
- 
-        <div class="card-body">
-          <div class="field">
-            <span class="field-label">Networks</span>
-            <div class="field-value">${renderTags(networks, 'network')}</div>
-          </div>
- 
-          <div class="divider"></div>
- 
-          <div class="field">
-            <span class="field-label">Dependencies</span>
-            <div class="field-value">${renderTags(deps, 'dep')}</div>
-          </div>
- 
-          ${notes ? `
-          <div class="divider"></div>
-          <div class="field">
-            <span class="field-label">Notes</span>
-            <div class="field-value"><div class="notes-box">${escape(notes)}</div></div>
-          </div>` : ''}
-        </div>
+      <div class="empty-state">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+        <p>select a container to view details</p>
       </div>`;
   }
- 
-  grist.ready({ requiredAccess: 'read table' });
-  grist.onRecord(record => render(record));
+
+  function renderCard(record) {
+    const name      = getVal(record, 'Container')   ?? '—';
+    const subdomain = getVal(record, 'Subdomain')   ?? '';
+    const networks  = parseMultiSelect(getVal(record, 'Networks'));
+    const deps      = parseMultiSelect(getVal(record, 'Dependencies'));
+    const notes     = getVal(record, 'Notes')       ?? '';
+
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    // ── Header ──
+    const header = document.createElement('div');
+    header.className = 'card-header';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'container-name-display';
+    nameEl.textContent = name;
+    nameEl.title = 'Click to edit';
+    nameEl.addEventListener('click', () => startEditName(nameEl, name));
+    header.appendChild(nameEl);
+
+    if (subdomain) {
+      const pill = document.createElement('div');
+      pill.className = 'subdomain-pill';
+      pill.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>${esc(subdomain)}`;
+      pill.title = 'Click to edit';
+      pill.addEventListener('click', () => startEditSubdomain(header, subdomain));
+      header.appendChild(pill);
+    } else {
+      const addBtn = document.createElement('div');
+      addBtn.className = 'subdomain-add';
+      addBtn.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> add subdomain`;
+      addBtn.addEventListener('click', () => startEditSubdomain(header, ''));
+      header.appendChild(addBtn);
+    }
+
+    card.appendChild(header);
+
+    // ── Badges ──
+    const badgeGrid = document.createElement('div');
+    badgeGrid.className = 'badge-grid';
+
+    BADGES.forEach(b => {
+      const val = getVal(record, b.key);
+      const on  = val === true || val === 1 || val === 'true';
+      const badge = document.createElement('span');
+      badge.className = `badge ${on ? 'on' : 'off'}`;
+      badge.innerHTML = `<span class="dot"></span>${esc(b.label)}`;
+      badge.title = on ? 'Click to disable' : 'Click to enable';
+      badge.addEventListener('click', async () => {
+        await saveField(b.key, !on);
+      });
+      badgeGrid.appendChild(badge);
+    });
+    card.appendChild(badgeGrid);
+
+    // ── Body ──
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    body.appendChild(makeMultiField('Networks',      networks, networkChoices, 'Networks',     'network'));
+    body.appendChild(makeDivider());
+    body.appendChild(makeMultiField('Dependencies',  deps,     depChoices,     'Dependencies', 'dep'));
+    body.appendChild(makeDivider());
+    body.appendChild(makeNotesField(notes));
+
+    card.appendChild(body);
+    app.appendChild(card);
+  }
+
+  function makeDivider() {
+    const d = document.createElement('div');
+    d.className = 'divider';
+    return d;
+  }
+
+  function makeMultiField(label, values, choices, colKey, tagClass) {
+    const field = document.createElement('div');
+    field.className = 'field';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'field-label';
+    lbl.textContent = label;
+    field.appendChild(lbl);
+
+    const valWrap = document.createElement('div');
+    valWrap.className = 'field-value';
+
+    const tagList = document.createElement('div');
+    tagList.className = 'tag-list';
+
+    values.forEach(v => {
+      const tag = document.createElement('span');
+      tag.className = `tag ${tagClass}`;
+
+      const txt = document.createElement('span');
+      txt.textContent = v;
+
+      const rm = document.createElement('span');
+      rm.className = 'tag-remove';
+      rm.textContent = '×';
+      rm.title = 'Remove';
+      rm.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await saveField(colKey, encodeChoiceList(values.filter(x => x !== v)));
+      });
+
+      tag.appendChild(txt);
+      tag.appendChild(rm);
+      tagList.appendChild(tag);
+    });
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'tag-add-btn';
+    addBtn.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> Add`;
+    addBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openChoiceDropdown(addBtn, values, choices, colKey);
+    });
+    tagList.appendChild(addBtn);
+
+    valWrap.appendChild(tagList);
+    field.appendChild(valWrap);
+    return field;
+  }
+
+  function makeNotesField(notes) {
+    const field = document.createElement('div');
+    field.className = 'field';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'field-label';
+    lbl.textContent = 'Notes';
+    field.appendChild(lbl);
+
+    const valWrap = document.createElement('div');
+    valWrap.className = 'field-value';
+
+    const display = document.createElement('div');
+    display.className = 'notes-display' + (notes ? '' : ' empty');
+    display.textContent = notes || 'Click to add notes…';
+    display.addEventListener('click', () => startEditNotes(valWrap, notes));
+
+    valWrap.appendChild(display);
+    field.appendChild(valWrap);
+    return field;
+  }
+
+  // ── Inline editors ────────────────────────────────────────────────────────
+
+  function startEditName(el, current) {
+    const input = document.createElement('input');
+    input.className = 'inline-input';
+    input.value = current;
+    el.replaceWith(input);
+    input.focus(); input.select();
+
+    async function commit() {
+      const v = input.value.trim();
+      if (v && v !== current) await saveField('Container', v);
+    }
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { input.value = current; input.blur(); }
+    });
+  }
+
+  function startEditSubdomain(headerEl, current) {
+    const existing = headerEl.querySelector('.subdomain-pill, .subdomain-add');
+    if (existing) existing.remove();
+
+    const row = document.createElement('div');
+    row.className = 'subdomain-edit-row';
+
+    const input = document.createElement('input');
+    input.className = 'subdomain-input';
+    input.value = current;
+    input.placeholder = 'e.g. myapp.example.com';
+
+    const save = document.createElement('button');
+    save.className = 'btn-xs btn-save';
+    save.textContent = 'Save';
+
+    const cancel = document.createElement('button');
+    cancel.className = 'btn-xs btn-cancel';
+    cancel.textContent = 'Cancel';
+
+    row.appendChild(input); row.appendChild(save); row.appendChild(cancel);
+    headerEl.appendChild(row);
+    input.focus();
+
+    async function commit() { await saveField('Subdomain', input.value.trim()); }
+    save.addEventListener('click', commit);
+    cancel.addEventListener('click', () => renderCard(currentRecord));
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  commit();
+      if (e.key === 'Escape') renderCard(currentRecord);
+    });
+  }
+
+  function startEditNotes(container, current) {
+    container.innerHTML = '';
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'notes-textarea';
+    textarea.value = current;
+
+    const actions = document.createElement('div');
+    actions.className = 'notes-actions';
+
+    const cancel = document.createElement('button');
+    cancel.className = 'btn-xs btn-cancel';
+    cancel.textContent = 'Cancel';
+
+    const save = document.createElement('button');
+    save.className = 'btn-xs btn-save';
+    save.textContent = 'Save';
+
+    actions.appendChild(cancel);
+    actions.appendChild(save);
+    container.appendChild(textarea);
+    container.appendChild(actions);
+    textarea.focus();
+
+    save.addEventListener('click', async () => { await saveField('Notes', textarea.value); });
+    cancel.addEventListener('click', () => renderCard(currentRecord));
+    textarea.addEventListener('keydown', e => {
+      if (e.key === 'Escape') renderCard(currentRecord);
+    });
+  }
+
+  // ── Grist wiring ──────────────────────────────────────────────────────────
+
+  grist.ready({ requiredAccess: 'full' });
+
+  grist.onRecord(async (record) => {
+    currentRecord = record;
+    currentRowId  = record?.id ?? null;
+
+    if (!record || !record.id) { renderEmpty(); return; }
+
+    // Grab tableId once from the widget's linked table
+    if (!tableId) {
+      try {
+        const info = await grist.widgetApi.getOption('tableId');
+        if (info) tableId = info;
+      } catch(e) {}
+    }
+
+    // Try to get tableId from docApi if we still don't have it
+    if (!tableId) {
+      try {
+        const tables = await grist.docApi.listTables();
+        // We'll rely on grist.getTable() with the current table context
+        tableId = tables[0]; // fallback, will be overridden properly
+      } catch(e) {}
+    }
+
+    await loadChoices();
+    renderCard(record);
+  });
+
+  grist.onNewRecord(() => {
+    currentRecord = null;
+    currentRowId  = null;
+    renderEmpty();
+  });
+
+  // Capture tableId from the section metadata
+  grist.on('message', (msg) => {
+    if (msg?.tableId) { tableId = msg.tableId; }
+  });
 </script>
 </body>
 </html>
