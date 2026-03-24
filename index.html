@@ -495,14 +495,16 @@
   async function loadChoicesViaAPI(tid) {
     try {
       const tokenInfo = await grist.docApi.getAccessToken({ readOnly: true });
-      // Use the parent frame's origin instead of baseUrl (which points to internal address)
-      const docId = tokenInfo.baseUrl.match(/\/docs\/([^\/]+)/)?.[1]
-                 ?? tokenInfo.baseUrl.split('/docs/').pop().split('/')[0];
+      // baseUrl looks like http://0.0.0.0:8484/o/docs/api/docs/DOCID
+      // Extract docId from the end of baseUrl
+      const docId = tokenInfo.baseUrl.split('/docs/').pop();
+      // Use parent frame origin to avoid CORS with internal address
       const origin = document.referrer
         ? new URL(document.referrer).origin
         : window.location.ancestorOrigins?.[0]
           ? new URL(window.location.ancestorOrigins[0]).origin
-          : tokenInfo.baseUrl.replace(/^http:\/\/0\.0\.0\.0/, window.location.origin);
+          : null;
+      if (!origin) { console.error('[widget] cannot determine Grist origin'); return; }
       const url = `${origin}/o/docs/api/docs/${docId}/tables/${tid}/columns?auth=${tokenInfo.token}`;
       console.log('[widget] fetching columns:', url);
       const resp = await fetch(url);
