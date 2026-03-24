@@ -497,6 +497,7 @@
       const tokenInfo = await grist.docApi.getAccessToken({ readOnly: true });
       // baseUrl looks like http://0.0.0.0:8484/o/docs/api/docs/DOCID
       // Extract docId from the end of baseUrl
+      console.log('[widget] baseUrl:', tokenInfo.baseUrl);
       const docId = tokenInfo.baseUrl.split('/docs/').pop();
       // Use parent frame origin to avoid CORS with internal address
       const origin = document.referrer
