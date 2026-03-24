@@ -474,9 +474,9 @@
   }
 
   async function saveField(colId, value) {
-    if (!currentRowId || !tableId) return;
+    if (!currentRowId) return;
     try {
-      await grist.getTable(tableId).update({ id: currentRowId, fields: { [colId]: value } });
+      await grist.getTable().update({ id: currentRowId, fields: { [colId]: value } });
     } catch(e) {
       showToast('Save failed: ' + e.message);
     }
@@ -489,20 +489,19 @@
     if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
   }
 
-  // ── Choice loading ────────────────────────────────────────────────────────
+  // ── Choice loading via column mapping ────────────────────────────────────
+  // Choices are delivered by Grist through onRecords/mappings — no API calls needed.
 
-  async function loadChoices() {
-    if (!tableId) return;
+  function extractChoices(mappings, colId) {
+    if (!mappings) return [];
+    const col = mappings[colId];
+    if (!col) return [];
     try {
-      const cols = await grist.docApi.getTableCols(tableId);
-      for (const col of cols) {
-        const opts = col.fields?.widgetOptions ? JSON.parse(col.fields.widgetOptions) : {};
-        if (col.id === 'Networks')      networkChoices = opts.choices ?? [];
-        if (col.id === 'Dependencies')  depChoices     = opts.choices ?? [];
-      }
-    } catch(e) {
-      // Silently fail — choices just won't populate
-    }
+      const opts = typeof col.widgetOptions === 'string'
+        ? JSON.parse(col.widgetOptions)
+        : (col.widgetOptions ?? {});
+      return opts.choices ?? [];
+    } catch(e) { return []; }
   }
 
   // ── Dropdown ──────────────────────────────────────────────────────────────
@@ -806,32 +805,35 @@
 
   // ── Grist wiring ──────────────────────────────────────────────────────────
 
-  grist.ready({ requiredAccess: 'full' });
+  grist.ready({
+    requiredAccess: 'full',
+    columns: [
+      { name: 'Container',    title: 'Container',    type: 'Text' },
+      { name: 'Subdomain',    title: 'Subdomain',    type: 'Text',       optional: true },
+      { name: 'Networks',     title: 'Networks',     type: 'ChoiceList' },
+      { name: 'Dependencies', title: 'Dependencies', type: 'ChoiceList' },
+      { name: 'Notes',        title: 'Notes',        type: 'Text',       optional: true },
+      { name: 'Compose',      title: 'Compose',      type: 'Bool',       optional: true },
+      { name: 'Proxy_Conf',   title: 'Proxy-Conf',   type: 'Bool',       optional: true },
+      { name: 'Cloudflare',   title: 'Cloudflare',   type: 'Bool',       optional: true },
+      { name: 'Authelia',     title: 'Authelia',     type: 'Bool',       optional: true },
+      { name: 'Auto_Update',  title: 'Auto-Update',  type: 'Bool',       optional: true },
+      { name: 'Auto_Start',   title: 'Auto-Start',   type: 'Bool',       optional: true },
+    ],
+  });
 
-  grist.onRecord(async (record) => {
+  grist.onRecord(async (record, mappings) => {
     currentRecord = record;
     currentRowId  = record?.id ?? null;
 
     if (!record || !record.id) { renderEmpty(); return; }
 
-    // Grab tableId once from the widget's linked table
-    if (!tableId) {
-      try {
-        const info = await grist.widgetApi.getOption('tableId');
-        if (info) tableId = info;
-      } catch(e) {}
+    // Extract choices from column mappings (most reliable cross-version method)
+    if (mappings) {
+      networkChoices = extractChoices(mappings, 'Networks');
+      depChoices     = extractChoices(mappings, 'Dependencies');
     }
 
-    // Try to get tableId from docApi if we still don't have it
-    if (!tableId) {
-      try {
-        const tables = await grist.docApi.listTables();
-        // We'll rely on grist.getTable() with the current table context
-        tableId = tables[0]; // fallback, will be overridden properly
-      } catch(e) {}
-    }
-
-    await loadChoices();
     renderCard(record);
   });
 
@@ -841,10 +843,7 @@
     renderEmpty();
   });
 
-  // Capture tableId from the section metadata
-  grist.on('message', (msg) => {
-    if (msg?.tableId) { tableId = msg.tableId; }
-  });
+
 </script>
 </body>
 </html>
