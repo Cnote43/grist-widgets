@@ -449,9 +449,12 @@
 
   function parseMultiSelect(val) {
     if (!val) return [];
+    // If Grist sends a Reference List, it might come as an array of IDs or Objects
     if (Array.isArray(val)) {
-      if (val[0] === 'L') return val.slice(1).filter(Boolean);
-      return val.filter(Boolean);
+      // Remove Grist's internal 'L' identifier if present
+      const cleanArray = val[0] === 'L' ? val.slice(1) : val;
+      // Map objects to their display labels if necessary, otherwise return as-is
+      return cleanArray.map(item => (typeof item === 'object' && item !== null) ? (item.label || item.id) : item).filter(Boolean);
     }
     return String(val).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
   }
@@ -827,13 +830,13 @@
     columns: [
       { name: 'Container',    title: 'Container',    type: 'Text' },
       { name: 'Subdomain',    title: 'Subdomain',    type: 'Text',       optional: true },
-      { name: 'Networks',     title: 'Networks',     type: 'ChoiceList' },
-      { name: 'Dependencies', title: 'Dependencies', type: 'ChoiceList' },
+      { name: 'Networks',     title: 'Networks',     type: 'Any' },
+      { name: 'Dependencies', title: 'Dependencies', type: 'Any',        optional: true },
       { name: 'Notes',        title: 'Notes',        type: 'Text',       optional: true },
       { name: 'Compose',      title: 'Compose',      type: 'Bool,Int',   optional: true },
       { name: 'Proxy_Conf',   title: 'Proxy-Conf',   type: 'Bool,Int',   optional: true },
       { name: 'Cloudflare',   title: 'Cloudflare',   type: 'Bool,Int',   optional: true },
-      { name: 'Authelia',     title: 'Authelia',     type: 'Bool,Int',   optional: true },
+      { name: 'Authelia',     type: 'Bool,Int',   optional: true },
       { name: 'Auto_Update',  title: 'Auto-Update',  type: 'Bool,Int',   optional: true },
       { name: 'Auto_Start',   title: 'Auto-Start',   type: 'Bool,Int',   optional: true },
     ],
