@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <title>Container Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -418,15 +418,23 @@
   @media screen and (max-width: 600px) {
     html, body {
       width: 100vw !important;
-      overflow-x: hidden;
+      height: auto !important;
+      min-height: 100% !important;
       margin: 0;
       padding: 0;
+      display: block !important; /* Overrides any flex-centering from Grist */
     }
 
     .card {
-      width: 95% !important; /* Slightly less than 100 to account for Grist's internal padding */
+      /* This is the most important part: */
+      width: calc(100% - 20px) !important; 
+      min-width: 320px !important;
+      
+      /* Force a minimum vertical height so Grist can't squish you to 10% */
+      min-height: 500px !important; 
+      
       margin: 10px auto !important;
-      min-width: 300px; /* This is the key "Push" factor */
+      box-sizing: border-box;
     }
     
     /* Increase touch targets for mobile */
