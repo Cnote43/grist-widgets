@@ -416,16 +416,17 @@
   }
   /* Mobile Optimization for Stacking */
   @media screen and (max-width: 600px) {
-    body {
-      padding: 8px; /* Reduce outer padding to save space */
-      background: var(--bg);
+    html, body {
+      width: 100vw !important;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
-  
+
     .card {
-      width: 100% !important;
-      max-width: none !important;
-      margin: 0 auto;
-      border-radius: var(--radius-sm);
+      width: 95% !important; /* Slightly less than 100 to account for Grist's internal padding */
+      margin: 10px auto !important;
+      min-width: 300px; /* This is the key "Push" factor */
     }
     
     /* Increase touch targets for mobile */
