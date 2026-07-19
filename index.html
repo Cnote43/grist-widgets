@@ -4,9 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <title>Container Detail</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  FONT: using Bunny Fonts (GDPR-friendly, doesn't log IPs) as a drop-in
+  replacement for Google Fonts. For fully local hosting (zero external
+  requests), download the variable woff2 files -- e.g. via
+  `npm install @fontsource-variable/geist @fontsource-variable/geist-mono`,
+  or from https://github.com/vercel/geist-font (SIL OFL licensed) -- and
+  place them at ./fonts/geist.woff2 and ./fonts/geist-mono.woff2 next to
+  this file (this widget is served from a GitHub Pages repo, so relative
+  paths work). Then delete the two tags below and uncomment the @font-face
+  block in the <style> section.
+-->
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=geist:300,400,500,600|geist-mono:400,500,600" rel="stylesheet">
+
 <style>
+  /*
+  @font-face {
+    font-family: 'Geist';
+    src: url('./fonts/geist.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist Mono';
+    src: url('./fonts/geist-mono.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  */
+
   :root {
     --bg: #ffffff;
     --surface: #ffffff;
@@ -22,6 +50,8 @@
     --green-soft: #dcfce7;
     --amber: #d97706;
     --amber-soft: #fef3c7;
+    --violet: #7c3aed;
+    --violet-soft: #ede9fe;
     --tag-bg: #eeecea;
     --tag-text: #44423d;
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
@@ -49,14 +79,14 @@
       --green-soft: #14291f;
       --amber: #f59e0b;
       --amber-soft: #2d2008;
+      --violet: #a78bfa;
+      --violet-soft: #2e1065;
       --tag-bg: #2a2926;
       --tag-text: #b8b5ae;
       --shadow-md: 0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
       --shadow-lg: 0 8px 24px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.3);
     }
-    .subdomain-display {
-      color: #e5e7eb; /* Off-white for dark mode */
-    }
+    .subdomain-display { color: #e5e7eb; }
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +128,7 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Header ── */
+  /* -- Header -- */
   .card-header {
     padding: 20px 24px 18px;
     border-bottom: 1px solid var(--border);
@@ -119,7 +149,7 @@
     letter-spacing: -0.02em;
     cursor: pointer;
     padding: 2px 4px;
-    margin-left: -4px; /* Align text with the left edge of the card content */
+    margin-left: -4px;
     border-radius: var(--radius-sm);
     transition: background 0.15s;
   }
@@ -142,30 +172,17 @@
 
   .subdomain-display {
     font-family: var(--font-mono);
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
     padding: 2px 4px;
     margin-left: -4px;
+    margin-top: 2px;
     border-radius: var(--radius-sm);
     transition: background 0.15s;
     color: #4b5563;
   }
-  .subdomain-display:hover, .container-name-display:hover {
-    background: var(--border);
-  }
-
-  .subdomain-add {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--text-muted);
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .subdomain-add:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .subdomain-display:hover { background: var(--border); }
 
   .subdomain-edit-row {
     display: flex;
@@ -201,11 +218,11 @@
   .btn-save   { background: var(--accent); color: #fff; }
   .btn-cancel { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
 
-  /* ── Badges ── */
+  /* -- Badges -- */
   .badge-grid {
     padding: 14px 24px;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
 
@@ -221,13 +238,7 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  /* Icon styling */
-  .badge-icon {
-    font-size: 10px;
-    font-weight: bold;
-    width: 10px;
-    display: inline-block;
-  }
+  .badge-icon { font-size: 10px; font-weight: bold; width: 10px; display: inline-block; }
   .badge:active { transform: scale(0.95); }
   .badge.on {
     background: var(--green-soft);
@@ -242,9 +253,8 @@
     opacity: 0.65;
   }
   .badge.off:hover { opacity: 1; color: var(--text-secondary); }
-  .badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-  /* ── Body ── */
+  /* -- Body -- */
   .card-body {
     padding: 20px 24px;
     display: flex;
@@ -261,17 +271,18 @@
 
   .field-label {
     font-size: 14px;
-    font-weight: 600; /* Increased weight for better legibility */
+    font-weight: 600;
     font-family: var(--font-mono);
-    color: var(--text-primary); /* This ensures black in light / white in dark */
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     padding-top: 4px;
   }
 
   .field-value { color: var(--text-primary); font-size: 13.5px; }
+  .field-empty { color: var(--text-muted); font-style: italic; font-size: 13.5px; }
 
-  /* ── Tags ── */
+  /* -- Tags -- */
   .tag-list { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; position: relative; }
 
   .tag {
@@ -288,6 +299,7 @@
   }
   .tag.network { border-color: color-mix(in srgb, var(--accent) 25%, transparent); background: var(--accent-soft); color: var(--accent); }
   .tag.dep     { border-color: color-mix(in srgb, var(--amber)  25%, transparent); background: var(--amber-soft);  color: var(--amber); }
+  .tag.port    { border-color: color-mix(in srgb, var(--violet) 25%, transparent); background: var(--violet-soft); color: var(--violet); }
 
   .tag-remove {
     cursor: pointer;
@@ -315,7 +327,7 @@
   }
   .tag-add-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 
-  /* ── Dropdown ── */
+  /* -- Dropdown -- */
   .dropdown-anchor { position: relative; display: inline-block; }
 
   .dropdown-menu {
@@ -348,7 +360,7 @@
   .dropdown-item:hover { background: var(--surface-2); }
   .check { width: 14px; font-size: 11px; color: var(--green); flex-shrink: 0; }
 
-  /* ── Notes ── */
+  /* -- Notes -- */
   .notes-display {
     background: var(--surface-2);
     border: 1px solid var(--border);
@@ -364,10 +376,7 @@
     opacity: 0.65;
     transition: opacity 0.15s, border-color 0.15s;
   }
-  .notes-display:hover {
-    opacity: 1;
-    border-color: var(--border-strong);
-  }
+  .notes-display:hover { opacity: 1; border-color: var(--border-strong); }
   .notes-display.empty { color: var(--text-muted); font-style: italic; }
 
   .notes-textarea {
@@ -386,16 +395,11 @@
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
   }
 
-  .notes-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 6px;
-    justify-content: flex-end;
-  }
+  .notes-actions { display: flex; gap: 6px; margin-top: 6px; justify-content: flex-end; }
 
   .divider { height: 1px; background: var(--border); margin: 0 -24px; }
 
-  /* ── Toast ── */
+  /* -- Toast -- */
   .toast {
     position: fixed;
     bottom: 16px;
@@ -414,7 +418,7 @@
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  /* Mobile Optimization for Stacking */
+
   @media screen and (max-width: 600px) {
     html, body {
       width: 100vw !important;
@@ -422,25 +426,16 @@
       min-height: 100% !important;
       margin: 0;
       padding: 0;
-      display: block !important; /* Overrides any flex-centering from Grist */
+      display: block !important;
     }
-
     .card {
-      /* This is the most important part: */
-      width: calc(100% - 20px) !important; 
+      width: calc(100% - 20px) !important;
       min-width: 320px !important;
-      
-      /* Force a minimum vertical height so Grist can't squish you to 10% */
-      min-height: 500px !important; 
-      
+      min-height: 500px !important;
       margin: 10px auto !important;
       box-sizing: border-box;
     }
-    
-    /* Increase touch targets for mobile */
-    .badge, .subdomain-display, .container-name-display {
-      padding: 10px 8px; 
-    }
+    .badge, .subdomain-display, .container-name-display { padding: 10px 8px; }
   }
 </style>
 </head>
@@ -457,23 +452,54 @@
 
 <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 <script>
-  const BADGES = [
-    { key: 'Compose',     label: 'Compose Stack' },
-    { key: 'Authelia',    label: 'Authelia' },
-    { key: 'Auto_Update', label: 'Auto-Update' },
-    { key: 'Proxy_Conf',  label: 'Proxy-Conf' },
-    { key: 'Auto_Start',  label: 'Auto-Start' },
-    { key: 'Cloudflare',  label: 'Cloudflare' },
+  // ---------------------------------------------------------------------
+  // Table IDs (verified against Raw Data -> stable regardless of display
+  // titles). If you ever rename a table's display title in Grist, these
+  // do NOT need to change -- only update them here if you change the
+  // actual Table ID itself (Raw Data page).
+  // ---------------------------------------------------------------------
+  const TABLE_CONTAINERS = 'Containers';
+  const TABLE_NETWORKS   = 'Networks';
+  const TABLE_STACKS     = 'Compose_Stacks';
+  const TABLE_PORTS      = 'Ports';
+
+  // Column ids within each of those tables, used for the lookup tables
+  // built from grist.docApi.fetchTable() (these calls are NOT covered by
+  // the grist.ready() column-mapping feature below, since that only
+  // applies to the primary bound table).
+  const COL_NETWORK_NAME = 'Network';
+  const COL_STACK_NAME   = 'Stack';
+  const COL_CONTAINER_NAME = 'Container';
+  const COL_PORT_CONTAINER = 'Container';
+  const COL_PORT_MAPPING   = 'Mapping';
+
+  const AUTHELIA_CHOICES = ['Full', 'Regex', 'None'];
+
+  // Badge definitions for the Containers table. 'bool' badges are simple
+  // click-to-toggle. 'choice' badges (just Authelia Bypass right now)
+  // open a single-select dropdown instead.
+  const BADGE_DEFS = [
+    { type: 'bool',   key: 'Compose',        label: 'Compose Stack' },
+    { type: 'choice', key: 'Authelia_Bypass', label: 'Authelia Bypass', choices: AUTHELIA_CHOICES, offValues: [null, undefined, '', 'None'] },
+    { type: 'bool',   key: 'Auto_Update',     label: 'Auto-Update' },
+    { type: 'bool',   key: 'Proxy_Conf',      label: 'Proxy-Conf' },
+    { type: 'bool',   key: 'Auto_Start',      label: 'Auto-Start' },
+    { type: 'bool',   key: 'Cloudflared',     label: 'Cloudflare' },
+    { type: 'bool',   key: 'OIDC',            label: 'OIDC' },
   ];
 
   let currentRecord  = null;
   let currentRowId   = null;
-  let tableId        = null;
-  let networkChoices = [];
-  let depChoices     = [];
+
+  // id -> display name lookup maps, refreshed on every onRecord.
+  let networkMap   = {};
+  let stackMap     = {};
+  let containerMap = {};
+  let portsData    = []; // [{ id, Container, Mapping }]
+
   let activeDropdown = null;
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // -- Helpers --------------------------------------------------------------
 
   function esc(str) {
     const d = document.createElement('div');
@@ -481,26 +507,23 @@
     return d.innerHTML;
   }
 
-  function parseMultiSelect(val) {
-    if (!val) return [];
-    // If Grist sends a Reference List, it might come as an array of IDs or Objects
-    if (Array.isArray(val)) {
-      // Remove Grist's internal 'L' identifier if present
-      const cleanArray = val[0] === 'L' ? val.slice(1) : val;
-      // Map objects to their display labels if necessary, otherwise return as-is
-      return cleanArray.map(item => (typeof item === 'object' && item !== null) ? (item.label || item.id) : item).filter(Boolean);
-    }
-    return String(val).split(/[,;]+/).map(s => s.trim()).filter(Boolean);
-  }
-
-  function encodeChoiceList(arr) { return ['L', ...arr]; }
-
   function getVal(record, key) {
-    return record[key]
-      ?? record[key.toLowerCase()]
-      ?? record[key.replace(/_/g, ' ')]
-      ?? null;
+    return record ? record[key] : undefined;
   }
+
+  // Reference List cell values arrive as ['L', id1, id2, ...] by default
+  // (non-typed) custom-widget format. Reference (single) values arrive as
+  // a plain row-id number (or 0/null when unset).
+  function parseRefList(val) {
+    if (!val) return [];
+    if (Array.isArray(val)) {
+      const arr = val[0] === 'L' ? val.slice(1) : val;
+      return arr.filter(v => v !== null && v !== undefined);
+    }
+    return [];
+  }
+
+  function encodeRefList(ids) { return ['L', ...ids]; }
 
   function showToast(msg) {
     const t = document.createElement('div');
@@ -514,68 +537,69 @@
     if (!currentRowId) return;
     try {
       await grist.getTable().update({ id: currentRowId, fields: { [colId]: value } });
-    } catch(e) {
+    } catch (e) {
       showToast('Save failed: ' + e.message);
     }
   }
 
-  // Close dropdown when clicking outside
   document.addEventListener('click', () => closeDropdown());
 
   function closeDropdown() {
     if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
   }
 
-  // ── Choice loading via REST API ───────────────────────────────────────────
-  // Choices live in column widgetOptions, accessible via Grist's REST API.
+  // -- Lookup tables (Networks / Stacks / Containers / Ports) ----------------
 
-  // ── Choice loading via Table Fetch ──────────────────────────────────────────
+  function buildIdMap(tableData, nameCol) {
+    const map = {};
+    const ids = tableData.id || [];
+    const names = tableData[nameCol] || [];
+    ids.forEach((id, i) => { map[id] = names[i]; });
+    return map;
+  }
 
-  async function loadChoicesFromTables() {
+  async function refreshLookups() {
     try {
-      // Fetch the 'Networks' table. Change 'Networks' to the actual Table ID if different.
-      const networkData = await grist.docApi.fetchTable('Networks');
-      // Assuming the primary column in that table is also named 'Network' or 'Name'
-      // We map the column array to get a clean list of strings
-      if (networkData.Network) {
-        networkChoices = networkData.Network.filter(Boolean);
-      } else if (networkData.Name) {
-        networkChoices = networkData.Name.filter(Boolean);
-      }
+      const [nets, stacks, containers, ports] = await Promise.all([
+        grist.docApi.fetchTable(TABLE_NETWORKS),
+        grist.docApi.fetchTable(TABLE_STACKS),
+        grist.docApi.fetchTable(TABLE_CONTAINERS),
+        grist.docApi.fetchTable(TABLE_PORTS),
+      ]);
+      networkMap   = buildIdMap(nets, COL_NETWORK_NAME);
+      stackMap     = buildIdMap(stacks, COL_STACK_NAME);
+      containerMap = buildIdMap(containers, COL_CONTAINER_NAME);
 
-      // Fetch the 'Dependencies' table.
-      const depData = await grist.docApi.fetchTable('Dependencies');
-      if (depData.Container) {
-        depChoices = depData.Container.filter(Boolean);
-      } else if (depData.Name) {
-        depChoices = depData.Name.filter(Boolean);
-      }
-
-      console.log('[widget] Refreshed choices from tables:', { networkChoices, depChoices });
+      const portIds = ports.id || [];
+      portsData = portIds.map((id, i) => ({
+        id,
+        Container: ports[COL_PORT_CONTAINER] ? ports[COL_PORT_CONTAINER][i] : null,
+        Mapping: ports[COL_PORT_MAPPING] ? ports[COL_PORT_MAPPING][i] : null,
+      }));
     } catch (e) {
-      console.error('[widget] Failed to fetch choices from tables:', e);
-      showToast('Could not sync Table choices');
+      console.error('[widget] Failed to refresh lookups:', e);
+      showToast('Could not sync lookup tables');
     }
   }
 
-  // ── Dropdown ──────────────────────────────────────────────────────────────
+  // -- Generic dropdown -------------------------------------------------------
+  // items: [{ label, selected, onClick }]
 
-  function openChoiceDropdown(anchorEl, currentValues, choices, colKey) {
+  function openDropdown(anchorEl, items, emptyText) {
     closeDropdown();
 
     const menu = document.createElement('div');
     menu.className = 'dropdown-menu';
 
-    if (!choices.length) {
+    if (!items.length) {
       const empty = document.createElement('div');
       empty.className = 'dropdown-item';
       empty.style.cssText = 'color:var(--text-muted);font-style:italic;cursor:default';
-      empty.textContent = 'No choices defined in column';
+      empty.textContent = emptyText || 'No options available';
       menu.appendChild(empty);
     }
 
-    choices.forEach(choice => {
-      const selected = currentValues.includes(choice);
+    items.forEach(({ label, selected, onClick }) => {
       const item = document.createElement('div');
       item.className = 'dropdown-item';
 
@@ -583,24 +607,20 @@
       check.className = 'check';
       check.textContent = selected ? '✓' : '';
 
-      const label = document.createElement('span');
-      label.textContent = choice;
+      const lbl = document.createElement('span');
+      lbl.textContent = label;
 
       item.appendChild(check);
-      item.appendChild(label);
+      item.appendChild(lbl);
 
       item.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const next = selected
-          ? currentValues.filter(v => v !== choice)
-          : [...currentValues, choice];
         closeDropdown();
-        await saveField(colKey, encodeChoiceList(next));
+        await onClick();
       });
       menu.appendChild(item);
     });
 
-    // Wrap anchor + menu together so menu is positioned relative to anchor
     const anchor = document.createElement('div');
     anchor.className = 'dropdown-anchor';
     anchorEl.parentNode.insertBefore(anchor, anchorEl);
@@ -609,7 +629,7 @@
     activeDropdown = menu;
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // -- Render -----------------------------------------------------------------
 
   function renderEmpty() {
     document.getElementById('app').innerHTML = `
@@ -623,11 +643,16 @@
   }
 
   function renderCard(record) {
-    const name      = getVal(record, 'Container')   ?? '—';
-    const subdomain = getVal(record, 'Subdomain')   ?? '';
-    const networks  = parseMultiSelect(getVal(record, 'Networks'));
-    const deps      = parseMultiSelect(getVal(record, 'Dependencies'));
-    const notes     = getVal(record, 'Notes')       ?? '';
+    const name       = getVal(record, 'Container') ?? '—';
+    const subdomain  = getVal(record, 'Subdomain') ?? '';
+    const stackId    = getVal(record, 'Stack') || null;
+    const networkIds = parseRefList(getVal(record, 'Networks'));
+    const depIds     = parseRefList(getVal(record, 'Dependencies'));
+    const notes      = getVal(record, 'Notes') ?? '';
+    const portMappings = portsData
+      .filter(p => p.Container === currentRowId)
+      .map(p => p.Mapping)
+      .filter(Boolean);
 
     const app = document.getElementById('app');
     app.innerHTML = '';
@@ -635,72 +660,54 @@
     const card = document.createElement('div');
     card.className = 'card';
 
-    // ── Header ──
+    // -- Header --
     const header = document.createElement('div');
     header.className = 'card-header';
 
     const titleGroup = document.createElement('div');
-    titleGroup.className = 'header-titles'; // Flex column wrapper
+    titleGroup.className = 'header-titles';
 
-    // Container Name (24px)
     const nameEl = document.createElement('div');
     nameEl.className = 'container-name-display';
     nameEl.textContent = name;
     nameEl.addEventListener('click', () => startEditName(nameEl, name));
     titleGroup.appendChild(nameEl);
 
-    // Subdomain (18px)
-    if (subdomain) {
-      const subEl = document.createElement('div');
-      subEl.className = 'subdomain-display';
-      subEl.textContent = `subdomain: ${subdomain}`
-      subEl.addEventListener('click', () => startEditSubdomain(header, subdomain));
-      titleGroup.appendChild(subEl);
-    } else {
-      const addBtn = document.createElement('div');
-      addBtn.className = 'subdomain-add';
-      addBtn.textContent = '+ add subdomain';
-      addBtn.addEventListener('click', () => startEditSubdomain(header, ''));
-      titleGroup.appendChild(addBtn);
-    }
+    const stackLabel = stackId ? (stackMap[stackId] || `#${stackId}`) : 'Unraid Template';
+    const stackEl = document.createElement('div');
+    stackEl.className = 'subdomain-display';
+    stackEl.textContent = `Stack: ${stackLabel}`;
+    stackEl.addEventListener('click', (e) => { e.stopPropagation(); openStackPicker(stackEl, stackId); });
+    titleGroup.appendChild(stackEl);
+
+    const subEl = document.createElement('div');
+    subEl.className = 'subdomain-display subdomain-line';
+    subEl.textContent = `Subdomain: ${subdomain || 'none.'}`;
+    subEl.addEventListener('click', () => startEditSubdomain(header, subdomain));
+    titleGroup.appendChild(subEl);
 
     header.appendChild(titleGroup);
     card.appendChild(header);
 
-    // ── Body (Networks, Deps, Badges, Notes) ──
+    // -- Body --
     const body = document.createElement('div');
     body.className = 'card-body';
 
-    // Row 1: Networks
-    body.appendChild(makeMultiField('Networks', networks, networkChoices, 'Networks', 'network'));
+    body.appendChild(makeRefListField('Networks', 'Networks', 'network', networkIds, networkMap, null));
     body.appendChild(makeDivider());
 
-    // Row 2: Dependencies
-    body.appendChild(makeMultiField('Dependencies', deps, depChoices, 'Dependencies', 'dep'));
+    body.appendChild(makePortsField(portMappings));
     body.appendChild(makeDivider());
 
-    // Row 3: Badges (2-column grid)
+    body.appendChild(makeRefListField('Dependencies', 'Dependencies', 'dep', depIds, containerMap, currentRowId));
+    body.appendChild(makeDivider());
+
     const badgeGrid = document.createElement('div');
     badgeGrid.className = 'badge-grid';
-    BADGES.forEach(b => {
-      const val = getVal(record, b.key);
-      const on  = val === true || val === 1 || val === 'true';
-      const badge = document.createElement('span');
-      badge.className = `badge ${on ? 'on' : 'off'}`;
-      
-      // Conditional icon: Checkmark if true, nothing if false
-      const iconHtml = on ? '<span class="badge-icon">✓</span>' : '';
-      badge.innerHTML = `${iconHtml}${esc(b.label)}`;
-      
-      badge.addEventListener('click', async () => {
-        await saveField(b.key, !on);
-      });
-      badgeGrid.appendChild(badge);
-    });
+    BADGE_DEFS.forEach(def => badgeGrid.appendChild(makeBadge(def, record)));
     body.appendChild(badgeGrid);
     body.appendChild(makeDivider());
 
-    // Row 4: Notes
     body.appendChild(makeNotesField(notes));
 
     card.appendChild(body);
@@ -713,7 +720,40 @@
     return d;
   }
 
-  function makeMultiField(label, values, choices, colKey, tagClass) {
+  function makeBadge(def, record) {
+    if (def.type === 'bool') {
+      const val = getVal(record, def.key);
+      const on = val === true || val === 1 || val === 'true';
+      const badge = document.createElement('span');
+      badge.className = `badge ${on ? 'on' : 'off'}`;
+      badge.innerHTML = `${on ? '<span class="badge-icon">✓</span>' : ''}${esc(def.label)}`;
+      badge.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await saveField(def.key, !on);
+      });
+      return badge;
+    }
+
+    // choice-type badge (Authelia Bypass)
+    const val = getVal(record, def.key);
+    const on = val && !def.offValues.includes(val);
+    const badge = document.createElement('span');
+    badge.className = `badge ${on ? 'on' : 'off'}`;
+    const text = on ? `${def.label}: ${val}` : def.label;
+    badge.innerHTML = `${on ? '<span class="badge-icon">✓</span>' : ''}${esc(text)}`;
+    badge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const items = def.choices.map(choice => ({
+        label: choice,
+        selected: choice === val,
+        onClick: async () => { await saveField(def.key, choice); },
+      }));
+      openDropdown(badge, items);
+    });
+    return badge;
+  }
+
+  function makeRefListField(label, colKey, tagClass, currentIds, idToNameMap, excludeId) {
     const field = document.createElement('div');
     field.className = 'field';
 
@@ -728,12 +768,13 @@
     const tagList = document.createElement('div');
     tagList.className = 'tag-list';
 
-    values.forEach(v => {
+    currentIds.forEach(id => {
+      const displayName = idToNameMap[id] ?? `#${id}`;
       const tag = document.createElement('span');
       tag.className = `tag ${tagClass}`;
 
       const txt = document.createElement('span');
-      txt.textContent = v;
+      txt.textContent = displayName;
 
       const rm = document.createElement('span');
       rm.className = 'tag-remove';
@@ -741,7 +782,7 @@
       rm.title = 'Remove';
       rm.addEventListener('click', async (e) => {
         e.stopPropagation();
-        await saveField(colKey, encodeChoiceList(values.filter(x => x !== v)));
+        await saveField(colKey, encodeRefList(currentIds.filter(x => x !== id)));
       });
 
       tag.appendChild(txt);
@@ -754,11 +795,58 @@
     addBtn.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> Add`;
     addBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      openChoiceDropdown(addBtn, values, choices, colKey);
+      const items = Object.entries(idToNameMap)
+        .filter(([id]) => (excludeId === null || excludeId === undefined) || Number(id) !== excludeId)
+        .map(([id, displayName]) => {
+          const idNum = Number(id);
+          const selected = currentIds.includes(idNum);
+          return {
+            label: displayName,
+            selected,
+            onClick: async () => {
+              const next = selected ? currentIds.filter(v => v !== idNum) : [...currentIds, idNum];
+              await saveField(colKey, encodeRefList(next));
+            },
+          };
+        });
+      openDropdown(addBtn, items, 'No options available');
     });
     tagList.appendChild(addBtn);
 
     valWrap.appendChild(tagList);
+    field.appendChild(valWrap);
+    return field;
+  }
+
+  function makePortsField(mappings) {
+    const field = document.createElement('div');
+    field.className = 'field';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'field-label';
+    lbl.textContent = 'Ports';
+    field.appendChild(lbl);
+
+    const valWrap = document.createElement('div');
+    valWrap.className = 'field-value';
+
+    if (!mappings.length) {
+      const empty = document.createElement('span');
+      empty.className = 'field-empty';
+      empty.textContent = 'No ports mapped';
+      valWrap.appendChild(empty);
+    } else {
+      const tagList = document.createElement('div');
+      tagList.className = 'tag-list';
+      mappings.forEach(m => {
+        const tag = document.createElement('span');
+        tag.className = 'tag port';
+        tag.textContent = m;
+        tagList.appendChild(tag);
+      });
+      valWrap.appendChild(tagList);
+    }
+
     field.appendChild(valWrap);
     return field;
   }
@@ -785,7 +873,7 @@
     return field;
   }
 
-  // ── Inline editors ────────────────────────────────────────────────────────
+  // -- Inline editors -----------------------------------------------------------
 
   function startEditName(el, current) {
     const input = document.createElement('input');
@@ -806,7 +894,7 @@
   }
 
   function startEditSubdomain(headerEl, current) {
-    const existing = headerEl.querySelector('.subdomain-pill, .subdomain-add');
+    const existing = headerEl.querySelector('.subdomain-line');
     if (existing) existing.remove();
 
     const row = document.createElement('div');
@@ -869,22 +957,45 @@
     });
   }
 
-  // ── Grist wiring ──────────────────────────────────────────────────────────
+  function openStackPicker(el, currentStackId) {
+    const items = [
+      {
+        label: '— None (Unraid Template) —',
+        selected: !currentStackId,
+        onClick: async () => { await saveField('Stack', null); },
+      },
+      ...Object.entries(stackMap).map(([id, displayName]) => ({
+        label: displayName,
+        selected: Number(id) === currentStackId,
+        onClick: async () => { await saveField('Stack', Number(id)); },
+      })),
+    ];
+    openDropdown(el, items, 'No stacks defined yet');
+  }
+
+  // -- Grist wiring ---------------------------------------------------------
+  // The 'name' values below are set to match the verified real column ids
+  // in Containers, so Grist should auto-map them on first load. If you
+  // later rename a column's actual Column ID (not just its label), open
+  // this widget's config panel in Grist and remap manually -- no code
+  // change needed.
 
   grist.ready({
     requiredAccess: 'full',
     columns: [
-      { name: 'Container',    title: 'Container',    type: 'Text' },
-      { name: 'Subdomain',    title: 'Subdomain',    type: 'Text',       optional: true },
-      { name: 'Networks',     title: 'Networks',     type: 'Any' },
-      { name: 'Dependencies', title: 'Dependencies', type: 'Any',        optional: true },
-      { name: 'Notes',        title: 'Notes',        type: 'Text',       optional: true },
-      { name: 'Compose',      title: 'Compose',      type: 'Bool,Int',   optional: true },
-      { name: 'Proxy_Conf',   title: 'Proxy-Conf',   type: 'Bool,Int',   optional: true },
-      { name: 'Cloudflare',   title: 'Cloudflare',   type: 'Bool,Int',   optional: true },
-      { name: 'Authelia',     type: 'Bool,Int',   optional: true },
-      { name: 'Auto_Update',  title: 'Auto-Update',  type: 'Bool,Int',   optional: true },
-      { name: 'Auto_Start',   title: 'Auto-Start',   type: 'Bool,Int',   optional: true },
+      { name: 'Container',        title: 'Container',        type: 'Text' },
+      { name: 'Subdomain',        title: 'Subdomain',        type: 'Text',     optional: true },
+      { name: 'Networks',         title: 'Networks',         type: 'RefList' },
+      { name: 'Dependencies',     title: 'Dependencies',     type: 'RefList',  optional: true },
+      { name: 'Stack',            title: 'Stack',             type: 'Ref',      optional: true },
+      { name: 'Notes',            title: 'Notes',             type: 'Text',     optional: true },
+      { name: 'Compose',          title: 'Compose',           type: 'Bool,Int', optional: true },
+      { name: 'Authelia_Bypass',  title: 'Authelia Bypass',   type: 'Choice',   optional: true },
+      { name: 'Auto_Update',      title: 'Auto-Update',       type: 'Bool,Int', optional: true },
+      { name: 'Proxy_Conf',       title: 'Proxy-Conf',        type: 'Bool,Int', optional: true },
+      { name: 'Auto_Start',       title: 'Auto-Start',        type: 'Bool,Int', optional: true },
+      { name: 'Cloudflared',      title: 'Cloudflare',        type: 'Bool,Int', optional: true },
+      { name: 'OIDC',             title: 'OIDC',               type: 'Bool,Int', optional: true },
     ],
   });
 
@@ -897,9 +1008,7 @@
       return;
     }
 
-    // Always refresh choices from tables to ensure the dropdowns are up to date
-    await loadChoicesFromTables();
-  
+    await refreshLookups();
     renderCard(record);
   });
 
@@ -908,8 +1017,6 @@
     currentRowId  = null;
     renderEmpty();
   });
-
-
 </script>
 </body>
 </html>
