@@ -666,7 +666,7 @@
 
     const subEl = document.createElement('div');
     subEl.className = 'subdomain-display subdomain-line';
-    subEl.textContent = `Subdomain: ${subdomain || 'none.'}`;
+    subEl.textContent = `Subdomain: ${subdomain || 'none'}`;
     subEl.addEventListener('click', () => startEditSubdomain(header, subdomain));
     titleGroup.appendChild(subEl);
 
